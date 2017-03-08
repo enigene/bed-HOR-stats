@@ -7,22 +7,37 @@
 
 BEGIN {
 # HOR list preparation
-	while ((getline __input < l) > 0) {
-    	if (__input ~ /^S/) {
-    		fullName = __input;
-			dotpos = index(fullName, ".");
-			nameBeforeDot = substr(fullName, 1, dotpos-1);
+    if (hNum == 0) {
+    	while ((getline __input < l) > 0) {
+    # Add all HORs from list
+        	if (__input ~ /^S/) {
+        		fullName = __input;
+    			dotpos = index(fullName, ".");
+    			nameBeforeDot = substr(fullName, 1, dotpos-1);
 
-			if (!(nameBeforeDot in horList)) {
-				horList[++hNum] = nameBeforeDot;
-				horList[nameBeforeDot] = hNum;
-			}
+    			if (!(nameBeforeDot in horList)) {
+    				horList[++hNum] = nameBeforeDot;
+    				horList[nameBeforeDot] = hNum;
+    			}
 
-    		horMonList[++mNum] = fullName;
-    		horMonList[fullName] = mNum;
-    	}
+        		horMonList[++mNum] = fullName;
+        		horMonList[fullName] = mNum;
+        	}
+    # Add HOR groups
+            if (__input ~ /^g/) {
+                fullName = __input;
+                split(fullName, tmpA);
+                gNum = substr(tmpA[1], 2);
+                gNums[gNum]++;
+                gHorName = tmpA[2];
+                horComment = tmpA[3];
+                horGroups[gNum][++gHorNum] = gHorName;
+                horGroups[gNum][gHorName] = gHorNum;
+                horComments[gNum][gHorName] = horComment;
+            }
+        }
+        close(l);
     }
-    close(l);
 
     first = 1;
 }
@@ -257,6 +272,24 @@ END {
 			}
 		}
 	}
+
+# Print HOR groups
+    print "\n#List_of_HORs_by_group";
+    gNumsL = length(gNums);
+    for (gNum=1; gNum<=gNumsL; gNum++) {
+        if (gNum == 1) printf("%s\n","Group_1: Only \"live\" HORs");
+        if (gNum == 2) printf("%s\n","Group_2: Only \"dead\" high copy HORs");
+        if (gNum == 3) printf("%s\n","Group_3: Only \"dead\" mid copy HORs");
+        if (gNum == 4) printf("%s\n","Group_4: Only \"dead\" low copy HORs");
+        for (igh=1; igh<=gHorNum; igh++) {
+            horComment = horComments[gNum][horGroups[gNum][igh]];
+            if (horGroups[gNum][igh] in horList) {
+                printf("%s%d_%s", "g", gNum, horGroups[gNum][igh]);
+                if (horComment != "") printf("_%s", horComment);
+                printf("\t%d\n", horA[horGroups[gNum][igh]]+0);
+            }
+        }
+    }
 
 # Print elements absent in HOR mon list
 	for (iInput in monA) {
