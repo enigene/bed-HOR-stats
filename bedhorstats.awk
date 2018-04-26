@@ -10,7 +10,7 @@ BEGIN {
   if (hNum == 0) {
     while ((getline __input < l) > 0) {
     # Add all HORs from list
-      if (__input ~ /^S/) {
+      if (__input !~ /^g|^#/) {
         fullName = __input;
         dotpos = index(fullName, ".");
         nameBeforeDot = substr(fullName, 1, dotpos-1);
