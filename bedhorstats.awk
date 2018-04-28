@@ -107,35 +107,35 @@ END {
 #   if(iInput ~ /^S4\/6/) sf4_6 += horA[iInput];
     if(iInput ~ /^S4/) sf4 += horA[iInput];
   }
-  printf("%s\t%d\n", "SF1", sf1+0);
-  printf("%s\t%d\n", "SF2", sf2+0);
-  printf("%s\t%d\n", "SF3", sf3+0);
-  printf("%s\t%d\n", "SF5", sf5+0);
-  printf("%s\t%d\n", "SF4", sf4+0);
-  printf("%s\t%d\n", "SF6", sf6+0);
+  printf("%s\t%d\n", "SF1", sf1);
+  printf("%s\t%d\n", "SF2", sf2);
+  printf("%s\t%d\n", "SF3", sf3);
+  printf("%s\t%d\n", "SF5", sf5);
+  printf("%s\t%d\n", "SF4", sf4);
+  printf("%s\t%d\n", "SF6", sf6);
 
   # print elements in HOR list
   print "#HOR_list";
   for(iList=1; iList<=hNum; iList++) {
     if(horList[iList] in horA) {
-      if(horA[horList[iList]]+0 > 0) {
+      if(+horA[horList[iList]] > 0) {
         hCount++;
       }
-      printf("%s\t%d\n", horList[iList], horA[horList[iList]]+0);
+      printf("%s\t%d\n", horList[iList], horA[horList[iList]]);
       # print score distribution
       if(scorestat) {
         for(sval in horScoreA[horList[iList]]) {
-          if(sval <= 61) {
+          if(+sval <= 61) {
             horScoreDistrA[horList[iList]]["leftCount"] += \
                           horScoreA[horList[iList]][sval];
             totalHorScoreA["leftCount"] += horScoreA[horList[iList]][sval];
           }
-          if((sval > 61)&&(sval < 97)) {
+          if((+sval > 61)&&(+sval < 97)) {
             horScoreDistrA[horList[iList]]["middleCount"] += \
                           horScoreA[horList[iList]][sval];
             totalHorScoreA["middleCount"] += horScoreA[horList[iList]][sval];
           }
-          if(sval >= 97) {
+          if(+sval >= 97) {
             horScoreDistrA[horList[iList]]["rightCount"] += \
                           horScoreA[horList[iList]][sval];
             totalHorScoreA["rightCount"] += horScoreA[horList[iList]][sval];
@@ -154,17 +154,17 @@ END {
       # print length distribution
       if(lengthstat) {
         for(lval in horLengthA[horList[iList]]) {
-          if(lval <= 50) {
+          if(+lval <= 50) {
             horLengthDistrA[horList[iList]]["leftCount"] += \
                            horLengthA[horList[iList]][lval];
             totalHorLengthA["leftCount"] += horLengthA[horList[iList]][lval];
           }
-          if((lval > 50)&&(lval < 76)) {
+          if((+lval > 50)&&(+lval < 76)) {
             horLengthDistrA[horList[iList]]["middleCount"] += \
                            horLengthA[horList[iList]][lval];
             totalHorLengthA["middleCount"] += horLengthA[horList[iList]][lval];
           }
-          if(lval >= 76) {
+          if(+lval >= 76) {
             horLengthDistrA[horList[iList]]["rightCount"] += \
                            horLengthA[horList[iList]][lval];
             totalHorLengthA["rightCount"] += horLengthA[horList[iList]][lval];
@@ -181,7 +181,7 @@ END {
           fpath "/" fbase flend;
       }
     } else {
-      printf("%s\t%d\n", horList[iList], horA[horList[iList]]+0);
+      printf("%s\t%d\n", horList[iList], horA[horList[iList]]);
       if(scorestat) {
         printf("%s\t%d\t%d\t%d\n", horList[iList], \
           horScoreDistrA[horList[iList]]["leftCount"], \
@@ -217,14 +217,14 @@ END {
   for(iInput in horA) {
     if(!(iInput in horList)) {
       foundAbsentHORs++;
-      if(foundAbsentHORs == 1) {
+      if(+foundAbsentHORs == 1) {
         print "\n#Items_absent_in_HOR_list:";
       }
-      printf("%s\t%d\n", iInput, horA[iInput]+0);
+      printf("%s\t%d\n", iInput, horA[iInput]);
     }
   }
 
-  printf("%s\t%d\n\n", "HORs_with_non-zero_amount_of_monomers:", hCount+0);
+  printf("%s\t%d\n\n", "HORs_with_non-zero_amount_of_monomers:", hCount);
 
   print "#List_of_HOR_monomers";
   if(scorestat) {
@@ -242,19 +242,19 @@ END {
   for(iList=1; iList<=mNum; iList++) {
     if(horMonList[iList] in monA) {
       mCount += monA[horMonList[iList]];
-      printf("%s\t%d\n", horMonList[iList], monA[horMonList[iList]]+0);
+      printf("%s\t%d\n", horMonList[iList], monA[horMonList[iList]]);
       # score distribution stats
       if(scorestat) {
         for(sval in monScoreA[horMonList[iList]]) {
-          if(sval <= 61) {
+          if(+sval <= 61) {
             monScoreDistrA[horMonList[iList]]["leftCount"] += \
                           monScoreA[horMonList[iList]][sval];
           }
-          if((sval > 61)&&(sval < 97)) {
+          if((+sval > 61)&&(+sval < 97)) {
             monScoreDistrA[horMonList[iList]]["middleCount"] += \
                           monScoreA[horMonList[iList]][sval];
           }
-          if(sval >= 97) {
+          if(+sval >= 97) {
             monScoreDistrA[horMonList[iList]]["rightCount"] += \
                           monScoreA[horMonList[iList]][sval];
           }
@@ -263,8 +263,8 @@ END {
             monScoreA[horMonList[iList]][sval]) >> fpath "/" fbase fsend;
           }
           # get min/max score values
-          maxScore = (sval+0 > maxScore+0) ? sval : maxScore;
-          minScore = (sval+0 < minScore+0) ? sval : minScore;
+          maxScore = (+sval > +maxScore) ? sval : maxScore;
+          minScore = (+sval < +minScore) ? sval : minScore;
         }
         printf("%s\t%d\t%d\t%d\n", horMonList[iList], \
           monScoreDistrA[horMonList[iList]]["leftCount"], \
@@ -275,15 +275,15 @@ END {
       # length distribution stats
       if(lengthstat) {
         for(lval in monLengthA[horMonList[iList]]) {
-          if(lval <= 50) {
+          if(+lval <= 50) {
             monLengthDistrA[horMonList[iList]]["leftCount"] += \
                            monLengthA[horMonList[iList]][lval];
           }
-          if((lval > 50)&&(lval < 76)) {
+          if((+lval > 50)&&(+lval < 76)) {
             monLengthDistrA[horMonList[iList]]["middleCount"] += \
                            monLengthA[horMonList[iList]][lval];
           }
-          if(lval >= 76) {
+          if(+lval >= 76) {
             monLengthDistrA[horMonList[iList]]["rightCount"] += \
                            monLengthA[horMonList[iList]][lval];
           }
@@ -292,8 +292,8 @@ END {
               monLengthA[horMonList[iList]][lval]) >> fpath "/" fbase flend;
           }
           # get min/max length values
-          maxLength = (lval+0 > maxLength+0) ? lval : maxLength;
-          minLength = (lval+0 < minLength+0) ? lval : minLength;
+          maxLength = (+lval > +maxLength) ? lval : maxLength;
+          minLength = (+lval < +minLength) ? lval : minLength;
         }
         printf("%s\t%d\t%d\t%d\n", horMonList[iList], \
           monLengthDistrA[horMonList[iList]]["leftCount"], \
@@ -302,7 +302,7 @@ END {
           fpath "/" fbase flend;
       }
     } else {
-      printf("%s\t%d\n", horMonList[iList], monA[horMonList[iList]]+0);
+      printf("%s\t%d\n", horMonList[iList], monA[horMonList[iList]]);
       if(scorestat) {
         printf("%s\t%d\t%d\t%d\n", horMonList[iList], \
           monScoreDistrA[horMonList[iList]]["leftCount"], \
@@ -324,16 +324,16 @@ END {
   print "\n#HOR_groups";
   gNumsL = length(gNums);
   for(gNum=1; gNum<=gNumsL; gNum++) {
-    if(gNum == 1) printf("%s\n","Group#1: live HORs");
-    if(gNum == 2) printf("%s\n","Group#2: high copy HORs");
-    if(gNum == 3) printf("%s\n","Group#3: average copy HORs");
-    if(gNum == 4) printf("%s\n","Group#4: low copy HORs");
+    if(+gNum == 1) printf("%s\n","Group#1: live HORs");
+    if(+gNum == 2) printf("%s\n","Group#2: high copy HORs");
+    if(+gNum == 3) printf("%s\n","Group#3: average copy HORs");
+    if(+gNum == 4) printf("%s\n","Group#4: low copy HORs");
     for(igh=1; igh<=gHorNum; igh++) {
       horComment = horComments[gNum][horGroups[gNum][igh]];
       if(horGroups[gNum][igh] in horList) {
         printf("%s%d_%s", "g", gNum, horGroups[gNum][igh]);
-        if(horComment != "") printf("_%s", horComment);
-          printf("\t%d\n", horA[horGroups[gNum][igh]]+0);
+        if(horComment) printf("_%s", horComment);
+          printf("\t%d\n", horA[horGroups[gNum][igh]]);
       }
     }
   }
@@ -342,22 +342,22 @@ END {
   for(iInput in monA) {
     if(!(iInput in horMonList)) {
       foundAbsentMons++;
-      if(foundAbsentMons == 1) {
+      if(+foundAbsentMons == 1) {
         print "\n#Items_absent_in_HOR_monomers_list:";
       }
-      absentMonA[iInput] = monA[iInput]+0;
+      absentMonA[iInput] = monA[iInput];
       if(debug) {
-        printf("%s\t%d\n", iInput, monA[iInput]+0);
+        printf("%s\t%d\n", iInput, monA[iInput]);
       }
     }
   }
 
   absentN = asorti(absentMonA, absentMonAs);
   for(i=1; i<=absentN; i++) {
-    printf("%s\t%d\n", absentMonAs[i], monA[absentMonAs[i]]+0);
+    printf("%s\t%d\n", absentMonAs[i], monA[absentMonAs[i]]);
   }
 
-  printf("%s\t%d\n",   "Monomer_counter:",     mCount+0);
+  printf("%s\t%d\n",   "Monomer_counter:",     mCount);
   printf("%s\t%.2f\n", "Min_score:",           minScore);
   printf("%s\t%.2f\n", "Max_score:",           maxScore);
   printf("%s\t%d\n",   "Unique_score_values:", length(scA));
